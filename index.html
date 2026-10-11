@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Happy Birthday Maisha ❤️</title>
 
 <style>
@@ -191,12 +190,12 @@ button:active{transform:scale(.95)}
 
 <div class="stars" id="stars"></div>
 
-<!-- BACKGROUND MUSIC -->
-<audio id="birthdaySong" autoplay preload="auto">
+<!-- BACKGROUND MUSIC: গান একদম শুরু থেকে -->
+<audio id="birthdaySong" autoplay preload="auto" loop>
     <source src="song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- MUSIC FALLBACK BUTTON: appears only if autoplay is blocked -->
+<!-- অটোপ্লে ব্লক হলে এই বাটন দেখাবে -->
 <button id="musicButton" onclick="startMusic()" style="
     display:none;
     position:fixed;
@@ -281,8 +280,8 @@ button:active{transform:scale(.95)}
         তুমি যেন রাতের আকাশের সেই চাঁদ— দূরে থেকেও যার আলো
         মনটাকে অদ্ভুত সুন্দর করে দেয়। 🌙✨
         <br><br>
-        তোমার হাসিটা যেন চাঁদের আলোর মতো শান্ত, আর তোমার উপস্থিতি
-        যেন কোনো সুন্দর রাতের সবচেয়ে সুন্দর মুহূর্ত।
+        তোমার হাসিটা যেন চাঁদের আলোর মতো শান্ত,
+        আর তোমার উপস্থিতি যেন কোনো সুন্দর রাতের সবচেয়ে সুন্দর মুহূর্ত।
         <br><br>
         আমি তোমাকে এতটাই ভালোবাসি, যেটা বলে বা লিখে পুরোপুরি
         বোঝানোর মতো না।
@@ -342,56 +341,38 @@ button:active{transform:scale(.95)}
 
 <script>
 /* =========================
-   BACKGROUND MUSIC
-   Starts at 16 seconds
+   MUSIC: PLAY FROM BEGINNING
 ========================= */
 
 const song = document.getElementById("birthdaySong");
 const musicButton = document.getElementById("musicButton");
-let musicInitialized = false;
 
-song.addEventListener("loadedmetadata", () => {
-    if (!musicInitialized) {
-        musicInitialized = true;
-
-        if (song.duration > 16) {
-            song.currentTime = 16;
-        }
-
-        song.play().then(() => {
-            musicButton.style.display = "none";
-        }).catch(() => {
-            musicButton.style.display = "block";
-        });
-    }
+song.addEventListener("canplay", function () {
+    song.play().then(function () {
+        musicButton.style.display = "none";
+    }).catch(function () {
+        musicButton.style.display = "block";
+    });
 });
 
-song.addEventListener("error", () => {
+song.addEventListener("error", function () {
     musicButton.style.display = "block";
 });
 
 function startMusic() {
-    if (song.readyState >= 1 && song.currentTime < 16) {
-        song.currentTime = 16;
-    }
-
-    song.play().then(() => {
+    song.play().then(function () {
         musicButton.style.display = "none";
-    }).catch(() => {
+    }).catch(function () {
         musicButton.style.display = "block";
     });
 }
 
-/* Try again after a user interaction if autoplay was blocked */
+/* অটোপ্লে ব্লক হলে প্রথম ট্যাপে গান চালানোর চেষ্টা */
 document.addEventListener("click", function retryMusic() {
-    if (song.paused && song.readyState >= 1) {
-        if (song.currentTime < 16) {
-            song.currentTime = 16;
-        }
-
-        song.play().then(() => {
+    if (song.paused) {
+        song.play().then(function () {
             musicButton.style.display = "none";
-        }).catch(() => {});
+        }).catch(function () {});
     }
 }, { once: true });
 
@@ -453,19 +434,16 @@ let typingTimer;
 function startTyping() {
     const box = document.getElementById("typing");
     box.innerHTML = "";
-
     clearTimeout(typingTimer);
 
     let i = 0;
 
     function type() {
         if (i < message.length) {
-            const char = message.charAt(i);
-
-            if (char === "\n") {
+            if (message.charAt(i) === "\n") {
                 box.appendChild(document.createElement("br"));
             } else {
-                box.appendChild(document.createTextNode(char));
+                box.appendChild(document.createTextNode(message.charAt(i)));
             }
 
             i++;
@@ -486,13 +464,11 @@ function createHeart() {
     const heart = document.createElement("div");
     heart.className = "heart";
     heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-
     heart.style.left = Math.random() * 100 + "%";
     heart.style.fontSize = (14 + Math.random() * 20) + "px";
     heart.style.animationDuration = (5 + Math.random() * 6) + "s";
 
     document.body.appendChild(heart);
-
     setTimeout(() => heart.remove(), 12000);
 }
 
@@ -557,9 +533,7 @@ for (let i = 0; i < 65; i++) {
 
 function restart() {
     document.getElementById("screen" + current).classList.remove("active");
-
     current = 1;
-
     document.getElementById("screen1").classList.add("active");
     updateDots();
 }
